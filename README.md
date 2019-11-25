@@ -1,6 +1,9 @@
 # DLA-PDF-Converter
 Converts DLA/DOD contract PDFs to Excel
 
+- Utilizes "PyPDF2"
+
+
 
 - mainlist is a list of item Arrays
 
