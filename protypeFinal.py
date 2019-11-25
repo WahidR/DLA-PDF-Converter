@@ -6,7 +6,7 @@
 #     #itemArrayFormat = ["Item#", "Quantity", "8A Quantity", "SA Quantity", "Unrestricted", "Period of Performance",
 #     #                   "NSN", "Delivery Identification", "State", "Region", "Throughput SPLC", "Requirement SPLC",
 #     #                  "Delivery Address",
-#     #                    "Service Code", "Delivery DODAAC", "Ordering Office DODAAC"]
+#     #                    "Service Code", "Delivery DODAAC", "Ordering Office DODAAC", "Notes"]
 #
 #     # modesFormat is another array because there can be multiple modes in each item
 #    # modesFormat = ["Mode", "Reciept %", "Max Parcel", "MinParcel", "FOB Restriction", "FSII", "SDA", "CI"]
@@ -25,31 +25,35 @@ def main():
     mainlist = []
     for i in range(len(clean_result)):
         item = clean_result[i]
-        print(f"Item {i}: ")
+        #print(f"Item {i}: ")
         #print(item.split())
 
         itemattributes = []
         #print("0 to nsn")
         #print(extractToNSN(item))
-        itemattributes.append((extractToNSN(item)))
+        itemattributes += ((extractToNSN(item)))
         print()
         #print("nsn to region")
         #print(extractNSNtoRegion(item))
-        itemattributes.append(extractNSNtoRegion(item))
+        itemattributes += (extractNSNtoRegion(item))
         print()
         #print("Region to Service Code:")
         #print(extractRegionToService(item))
-        itemattributes.append(extractRegionToService(item))
+        itemattributes += (extractRegionToService(item))
         print()
         #print("Service Code to Mode")
         #print(extractServiceCodeToMode(item))
-        itemattributes.append(extractServiceCodeToMode(item))
+        itemattributes += (extractServiceCodeToMode(item))
         #print()
-        clean_result.append(itemattributes)
-        print("Right here")
-        print(itemattributes)
+        mainlist.append(itemattributes)
+
+
+
     print("THIS IS MAINLIST")
-    print(mainlist)
+    print(mainlist[0][6:10])
+    print(mainlist[1][6:10])
+    print(mainlist[2][6:10])
+    print(mainlist[12][6:10])
 
 
 def dataExtraction(filename):
