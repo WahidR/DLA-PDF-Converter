@@ -3,14 +3,12 @@ Converts DLA/DOD contract PDFs to Excel
 
 - Utilizes "PyPDF2"
 
-
-
 - mainlist is a list of item Arrays
 
 - This is how each item array will look
     -itemArrayFormat = ["Item#", "Quantity", "8A Quantity", "SA Quantity", "Unrestricted", "Period of Performance",
     "NSN", "Delivery Identification", "State", "Region", "Throughput SPLC", "Requirement SPLC",
-    "Delivery Address","Service Code", "Delivery DODAAC", "Ordering Office DODAAC", "Notes"]
+    "Delivery Address","Service Code", "Delivery DODAAC", "Ordering Office DODAAC", [Mode1, Mode2, "Delivery Notes/Hours"] ]
 
 
 - modesFormat is another array because there can be multiple modes in each item. Each mode will be in a mode list
