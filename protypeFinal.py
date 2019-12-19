@@ -19,7 +19,10 @@
 
 
 import PyPDF2
+import xlsxwriter
+
 import re
+
 
 def main():
     filename = 'WESTPAC_sol.pdf'
@@ -28,40 +31,64 @@ def main():
 
     for i in range(len(clean_result)):
         item = clean_result[i]
-        #print(f"Item {i}: ")
-        #print(item.split())
+        # print(f"Item {i}: ")
+        # print(item.split())
 
         itemattributes = []
-        #print("0 to nsn")
-        #print(extractToNSN(item))
+        # print("0 to nsn")
+        # print(extractToNSN(item))
         itemattributes += ((extractToNSN(item)))
 
-        #print("nsn to region")
-        #print(extractNSNtoRegion(item))
+        # print("nsn to region")
+        # print(extractNSNtoRegion(item))
         itemattributes += (extractNSNtoRegion(item))
 
-        #print("Region to Service Code:")
-        #print(extractRegionToService(item))
+        # print("Region to Service Code:")
+        # print(extractRegionToService(item))
         itemattributes += (extractRegionToService(item))
 
-        #print("Service Code to Mode")
-        #print(extractServiceCodeToMode(item))
+        # print("Service Code to Mode")
+        # print(extractServiceCodeToMode(item))
         itemattributes += (extractServiceCodeToMode(item))
 
-        #print("Mode to End")
-        #print(extractModeToEnd(item))
-        #print("\n")
-        itemattributes += (extractModeToEnd(item))
+        # print("Mode to End")
+        # print(extractModeToEnd(item))
+        # print("\n")
+        itemattributes.append(extractModeToEnd(item))
 
         mainlist.append(itemattributes)
+    templist = []
+    for item in mainlist:
+        newitem = item
+        templist.append(newitem)
+    print(mainlist[5][16])
+
+    workbook = xlsxwriter.Workbook('my.csv')
+    worksheet = workbook.add_worksheet('my.csv')
 
 
 
-    print("THIS IS MAINLIST")
-    print(mainlist[0])
-    print(mainlist[1])
+    #Writes Data into sheet
+    for i in range(len(templist)):
+        for j in range(len(templist[i])):
+            worksheet.write(i+1, j, str(mainlist[i][j]))
+
+    itemFormat = ["Item#", "Quantity", "8A Quantity", "SA Quantity", "Unrestricted", "Period of Performance",
+                  "NSN", "Delivery Identification", "State", "Region", "Throughput SPLC", "Requirement SPLC",
+                  "Delivery Address","Service Code", "Delivery DODAAC", "Ordering Office DODAAC",
+                  "[mode1, mode2, notes]"]
+    for i in range(len(itemFormat)):
+        worksheet.write(0, i, itemFormat[i])
+    
 
 
+
+    workbook.close()
+
+    # itemArrayFormat = ["Item#", "Quantity", "8A Quantity", "SA Quantity", "Unrestricted", "Period of Performance",
+    #     #                   "NSN", "Delivery Identification", "State", "Region", "Throughput SPLC", "Requirement SPLC",
+    #     #                  "Delivery Address",
+    #     #                   "Service Code", "Delivery DODAAC", "Ordering Office DODAAC", "[mode1, mode2, notes]"]
 
 def dataExtraction(filename):
     pdfFileObj = open(filename, 'rb')
@@ -92,6 +119,7 @@ def dataExtraction(filename):
 
     return clean_result
 
+
 def extractToNSN(item):
     item0tonsn = item[0:item.find("NSN")]
     array0tonsn = item0tonsn.split()
@@ -110,6 +138,7 @@ def extractToNSN(item):
     result.append(array0tonsn[15])
 
     return result
+
 
 def extractNSNtoRegion(item):
     focus = item[item.find("NSN"):item.find("Region")]
@@ -137,6 +166,7 @@ def extractNSNtoRegion(item):
         result[0] += " " + thirdline
     return result
 
+
 def extractRegionToService(item):
     result = ["Region", "ThroughputSPLC", "RequirementSPLC", "Delivery Address"]
     focus = item[item.find("Region"):item.find("Service Code")]
@@ -157,12 +187,13 @@ def extractRegionToService(item):
         result[3] = focus[focus.find("Address:") + 9:]
         return result
 
+
 def extractServiceCodeToMode(item):
     focus = item[item.find("Service Code"):item.find("Mode")]
 
     result = ["Service Code", "Delivery DODAAC", "Ordering Office DODAAC"]
     focus_split = focus.split()
-#    Checks if there is a Service Code
+    #    Checks if there is a Service Code
     if (focus.find("SE") == 0):
         result[0] = ""
     else:
@@ -170,12 +201,13 @@ def extractServiceCodeToMode(item):
     result[1] = focus[focus.find("SE"):focus.find("SE") + 6]
     lastElem = focus_split[len(focus_split) - 1]
     lenDODAAC = len(lastElem[lastElem.find("SE"):])
-#    Checks to see if there is an Ordering Office DODAAC
+    #    Checks to see if there is an Ordering Office DODAAC
     if (lenDODAAC > 6):
         result[2] = focus[focus.find("SE") + 6:]
     else:
         result[2] = ""
     return result
+
 
 def maxandminfinder(numbers):
     result = ["max", "min"]
@@ -214,7 +246,6 @@ def maxandminfinder(numbers):
 
 def extractModeToEnd(item):
     focus = item[item.find("BULK:"):]
-
 
     #   listofmodes = [mode1,mode2,delivery instructions]
     #   len(listofmodes) will always be the number of modes + 1 b/c of delivery instructions
